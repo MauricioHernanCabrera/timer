@@ -1,17 +1,6 @@
 import React, { useState } from 'react';
 import './App.scss';
 
-// import WebWorker from './workerSetup';
-
-// const worker = new WebWorker(`
-//   self.addEventListener('message', e => {
-//     // eslint-disable-line no-restricted-globals
-//     console.log(e.data);
-//   })
-// `);
-
-// worker.postMessage('Fetch Users');
-
 let interval = null;
 
 const PATTERN_VIBRATE_FINISH_TIMER = [500, 250, 500, 250, 500];
@@ -94,17 +83,27 @@ const useTimer = ({ minutes = 0, seconds = 0 } = {}) => {
     timer.seconds--;
     setTimer({ ...timer });
 
+    enableNotifications();
+    showNotification(`${timer.minutes}:${timer.seconds}`, {
+      body: 'Timer in process!',
+      tag: '11111',
+      silent: false,
+      renotify: true,
+      vibrate: PATTERN_VIBRATE_FINISH_TIMER
+    });
+
     if (finishedTimer(timer)) {
-      restartTimer();
       sayMessage();
       enableNotifications();
       showNotification('Timer finished!', {
         body: 'Timer finished!',
-        tag: 1,
+        tag: '11111',
         silent: false,
         renotify: true,
         vibrate: PATTERN_VIBRATE_FINISH_TIMER
       });
+
+      restartTimer();
       // vibrate(PATTERN_VIBRATE_FINISH_TIMER);
     }
   };
@@ -119,7 +118,8 @@ const useTimer = ({ minutes = 0, seconds = 0 } = {}) => {
   };
 
   const updateTimer = timer => {
-    setTimer(timer);
+    setDefaulTimer({ ...timer });
+    setTimer({ ...timer });
   };
 
   return {
